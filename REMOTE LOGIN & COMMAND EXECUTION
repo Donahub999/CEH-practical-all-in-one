@@ -1,0 +1,324 @@
+CEH PRACTICAL – REMOTE LOGIN & COMMAND EXECUTION (LINUX)
+Objective
+
+Exploit a remote login or command-line execution application on a Linux machine in
+10.10.55.0/24 and read the file:
+
+Netnormal.txt
+
+STEP 1: Identify the Target Linux Machine
+
+Why: You must first discover which host is alive and running Linux.
+
+nmap -sn 10.10.55.0/24
+
+
+✔ Note the live IP addresses
+
+STEP 2: Service Enumeration
+
+Why: To find a service that allows remote login or remote command execution.
+
+nmap -sV -p 21,22,23,80,443,445 10.10.55.X
+
+
+Look for:
+
+SSH (22)
+
+FTP (21)
+
+Telnet (23)
+
+Web service (80/443)
+
+STEP 3: Identify Vulnerable Login / RCE Service
+
+Why: CEH typically uses weak credentials, misconfigured services, or known vulnerable apps.
+
+Common exam scenarios:
+
+SSH with weak credentials
+
+FTP anonymous login
+
+Web app with command execution
+
+Vulnerable service detected via version
+
+Optional check:
+
+nmap --script vuln 10.10.55.X
+
+STEP 4: Exploit Remote Login OR Command Execution
+🔹 Option A: Remote Login (SSH / FTP)
+
+Why: Direct shell access is easiest to retrieve files.
+
+Example:
+
+ssh user@10.10.55.X
+
+
+If FTP:
+
+ftp 10.10.55.X
+
+🔹 Option B: Remote Command Execution (Web App)
+
+Why: Some CEH labs expose command execution via web input.
+
+Test payload:
+
+; id
+; whoami
+; pwd
+
+
+If command execution works, spawn a shell:
+
+/bin/bash
+
+STEP 5: Locate the Sensitive File
+
+Why: The file location is usually unknown.
+
+find / -name Netnormal.txt 2>/dev/null
+
+
+Typical locations:
+
+/home/user/
+
+/var/www/
+
+/tmp/
+
+STEP 6: Read the File
+
+Why: The content of this file is the final answer.
+
+cat Netnormal.txt
+
+
+✔ Copy the exact content
+✔ Preserve case sensitivity
+✔ No extra spaces or lines
+
+STEP 7: Validate the Answer Format
+
+The exam gives a format hint:
+
+Format: ANaN*aNaN
+
+
+✔ Uppercase letters
+✔ Lowercase letters
+✔ Numbers
+✔ Special character (*)
+
+If your output matches this pattern, you’re correct.
+
+WHAT CEH IS TESTING HERE
+Skill	Tested
+Network enumeration	✅
+Service identification	✅
+Exploitation logic	✅
+Linux command usage	✅
+File discovery	✅
+COMMON MISTAKES (AVOID THESE)
+
+❌ Guessing the answer
+❌ Using random exploits without enumeration
+❌ Forgetting 2>/dev/null while searching
+❌ Typing extra spaces in final answer
+
+EXAM TIP (VERY IMPORTANT)
+
+If you see:
+
+“remote login and command-line execution application”
+
+It usually means:
+
+SSH / FTP OR
+
+Web-based RCE
+👉 Not privilege escalation
+
+✅ Summary
+
+You must:
+
+Scan subnet
+
+Identify Linux host
+
+Find login/RCE service
+
+Gain shell access
+
+Locate Netnormal.txt
+
+Read file
+
+Enter content exactly
+
+If you want, I can:
+
+Map this question to exact CEH modules
+
+Show which Metasploit exploit fits exam labs
+
+Give a one-command cheat sheet
+
+Walk you through common CEH Linux vulnerabilities
+
+Just tell me 👍
+
+after ssh loging how to find a paricular txt file or a file , if find command is not working then? and if find is woking
+
+Great practical question 👍 — this does come in CEH Practical a lot.
+
+I’ll explain both cases clearly:
+
+When find IS working
+
+When find is NOT working / restricted
+
+And I’ll also explain why each method works, so you know which one to use in the exam.
+
+🔐 AFTER SSH LOGIN – HOW TO FIND A FILE IN LINUX
+✅ CASE 1: find COMMAND IS WORKING (BEST & FASTEST)
+🔹 Why use find?
+
+Searches the entire filesystem
+
+Works even if you don’t know the file location
+
+CEH exam-friendly
+
+🔹 Command (Recommended)
+find / -name Netnormal.txt 2>/dev/null
+
+🔹 Explanation
+Part	Meaning
+/	Start search from root
+-name	Search by exact filename
+2>/dev/null	Hide permission errors
+🔹 If filename case is unknown
+find / -iname netnormal.txt 2>/dev/null
+
+🔹 If only extension is known
+find / -name "*.txt" 2>/dev/null
+
+🔹 After locating file
+cat /path/to/Netnormal.txt
+
+❌ CASE 2: find COMMAND NOT WORKING / RESTRICTED
+
+This happens when:
+
+Limited user permissions
+
+BusyBox / restricted shell
+
+find binary missing
+
+👉 DO NOT PANIC — CEH expects you to know alternatives.
+
+🔁 METHOD 1: locate (If Available)
+🔹 Why?
+
+Uses an indexed database → very fast
+
+locate Netnormal.txt
+
+
+⚠️ If database is outdated:
+
+sudo updatedb
+
+🔁 METHOD 2: Manual Directory Enumeration (EXAM-FRIENDLY)
+🔹 Why?
+
+CEH labs usually store files in predictable locations
+
+Check these first 👇
+
+ls
+pwd
+
+
+Then:
+
+ls /home
+ls /home/*
+ls /tmp
+ls /var/www
+ls /opt
+
+🔹 Typical CEH file locations
+Location	Reason
+/home/user/	User-owned sensitive files
+/tmp/	Temporary attacker files
+/var/www/html/	Web-related flags
+/opt/	Custom apps
+/root/	If root access
+🔁 METHOD 3: grep (VERY IMPORTANT FALLBACK)
+🔹 Why?
+
+If you know partial content, you can search inside files.
+
+grep -R "Netnormal" / 2>/dev/null
+
+
+Or search all .txt files:
+
+grep -R "normal" /home 2>/dev/null
+
+🔁 METHOD 4: Using ls -R (Recursive Listing)
+ls -R /home 2>/dev/null | grep Netnormal
+
+🔁 METHOD 5: Check Recently Modified Files (SMART TRICK)
+find / -type f -mtime -2 2>/dev/null
+
+
+Why?
+
+CEH files are often recently created
+
+🔁 METHOD 6: Check Environment Hints
+history
+env
+
+
+Why?
+
+Sometimes path is leaked in command history
+
+🔥 BEST EXAM STRATEGY (ORDER TO TRY)
+
+1️⃣ find / -name filename 2>/dev/null
+2️⃣ find / -iname "*.txt"
+3️⃣ Check /home, /tmp, /var/www
+4️⃣ grep -R
+5️⃣ ls -R | grep
+
+⚠️ COMMON CEH EXAM MISTAKES
+
+❌ Forgetting 2>/dev/null
+❌ Searching /root without root
+❌ Wasting time brute-searching whole system blindly
+
+🧠 QUICK CHEAT SHEET
+# Best
+find / -iname Netnormal.txt 2>/dev/null
+
+# If find fails
+ls /home/*
+ls /var/www/html
+grep -R "Netnormal" /home 2>/dev/null
+
+# Read file
+cat Netnormal.txt
