@@ -371,7 +371,7 @@ Set security → LOW
 ✔️ Flags usually plain text
 ✔️ Don’t overthink payloads
 
-📘 GITHUB WIKI STRUCTURE (RECOMMENDED)
+ WIKI STRUCTURE (RECOMMENDED)
 Home
 ├── Command Injection
 ├── SQL Injection
@@ -380,3 +380,71 @@ Home
 ├── XXE
 ├── WPScan
 ├── Android (ADB)
+============================================================================================
+
+🔴 STORED XSS PRACTICAL
+5️⃣ Open XSS (Stored)
+DVWA → XSS (Stored)
+
+6️⃣ Inject Payload in Comment Box
+<script>alert('Stored XSS')</script>
+
+
+Submit the form.
+
+✅ Output:
+
+Alert pops up
+
+Reload page → alert again
+
+📌 Stored permanently in database
+
+CEH Key Point:
+
+Stored XSS affects all users viewing the page.
+
+🔴 DOM-BASED XSS (Quick)
+7️⃣ DOM Payload
+<script>document.write(document.location)</script>
+
+
+📌 Happens in browser, not server.
+
+🔹 ADVANCED PAYLOADS (EXAM USEFUL)
+Purpose	Payload
+Alert	<script>alert(1)</script>
+Cookie theft	<script>alert(document.cookie)</script>
+HTML injection	<h1>Hacked</h1>
+Image-based	<img src=x onerror=alert(1)>
+🔹 HOW TO CONFIRM XSS (Exam Logic)
+
+Input reflected back?
+
+JavaScript executed?
+
+Alert box visible?
+
+✔️ If YES → XSS confirmed
+
+🔹 IMPACT OF XSS (CEH THEORY)
+
+Session hijacking
+
+Cookie theft
+
+Keylogging
+
+Phishing
+
+Website defacement
+
+🔹 HOW TO PREVENT XSS (CEH MUST)
+
+Input validation
+
+Output encoding
+
+Content Security Policy (CSP)
+
+HttpOnly cookies
